@@ -51,7 +51,7 @@ void readval()
 void miscari()
 {
  moveClaw(potpercentage(potentiometru));
- //moveBase(mpu6050.getAngleZ());
+ moveBase(mpu6050.getAngleZ());
 }
 void loop() {
 readval();
