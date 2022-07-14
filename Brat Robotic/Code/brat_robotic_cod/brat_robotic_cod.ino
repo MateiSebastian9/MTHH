@@ -1,11 +1,11 @@
 
 
 /************************************************************************************************************************
- * Autori: Cod MTHH scris de catre Matei Sebastian(elev Alexandru Ioan Cuza) cu ajutorul lui Matei Barbu(elev Tudor Vianu).
- * Descriere: Proiectul este destinat concursului InfoEducatie editia 2022,etapa judeteana,sectiunea roboti;
- * Date: 7/mai/2022
- * @matei.sebastian9   @mate.brb
- * Cost aproximativ proiect:400 RON
+ * Autori: Cod MTHH scris de catre Matei Sebastian(elev Alexandru Ioan Cuza).
+ * Descriere: Proiectul este destinat concursului InfoEducatie editia 2022,etapa nationala,sectiunea roboti;
+ * Date: 7/7/2022
+ * @matei.sebastian9 
+ * Cost aproximativ proiect:800 RON
  *************************************************************************************************************************/
 
  
@@ -21,7 +21,7 @@ int stepDelay = 4500,stepDelaySmall = 9500,ok=0,inversez=0;
 unsigned int Pos;
 int pos=300,onoff,response_time = 5,response_time_4 = 2,loop_check = 0,response_time_fast = 20,action_delay = 600,potentiometru=0,potentiometru1=0;
 const int spozbaseinf=200,spozbasesup=400,spozcot=420,spozwristz=120,spozwristspin=255;
-
+float vdegree=200,vdegree4=120;
 void moveBaseSup(float degree)
 {
  degree=degree*4;
@@ -83,12 +83,24 @@ void wakeupservos()
 }
 void movewristz(float degree4)
 {
+  int intdegree4;
   degree4*=-3;
   degree4+=spozwristz;
   inversez*=2;
   degree4+=inversez;
-  if(degree4>95 && degree4<350)
-  HCPCA9685.Servo(servoinchieietura,degree4);
+  float degdif4=vdegree4-degree4;
+  Serial.print(degdif4);
+ Serial.print("|");
+  if(degdif4>20)degdif4=10;
+  if(degdif4<-20)degdif4=-10;
+  vdegree4+=degdif4/10*-1; 
+ intdegree4=vdegree4;
+ Serial.print(intdegree4);
+ Serial.print("|");
+ Serial.print(degdif4);
+ Serial.print('\n');
+  if(intdegree4>95 && intdegree4<350)
+  HCPCA9685.Servo(servoinchieietura,intdegree4);
 }
 
 void parkare()
@@ -103,19 +115,23 @@ void parkare()
        delay(300);
 }
 
-void movewristspin(float degree5)
+void movewristspin(int degree5)
 {
   degree5*=4;
   degree5+=spozwristspin;
   HCPCA9685.Servo(servoclawtilt,degree5);
-  Serial.print(degree5);
-  Serial.print("      ");
 }
-void moveBase(float degree)
+void moveBase(int degree)
 {
+  int intdegree;
   degree*=2;
   degree+=spozbaseinf;
-  HCPCA9685.Servo(servobaseinfpos,degree);
+  float degdif=vdegree-degree;
+  if(degdif>15)degdif=10;
+  if(degdif<-15)degdif=-10;
+  vdegree+=degdif/5*-1; 
+ intdegree=vdegree;
+  HCPCA9685.Servo(servobaseinfpos,intdegree);
 }
 void readval()
 {
@@ -155,7 +171,6 @@ void loop() {
   {
 wakeupservos();
 miscari();
-delay(35);
   }
   
   else if (onoff==0)
